@@ -115,8 +115,7 @@ def central_crop(image, crop_size):
                                            target_height, target_width)
 
 
-def preprocess_image(image, augment=False, central_crop_size=None,
-                     num_towers=4):
+def preprocess_image(image, num_towers=1):
   """Normalizes image to have values in a narrow range around zero.
 
   Args:
@@ -131,19 +130,6 @@ def preprocess_image(image, augment=False, central_crop_size=None,
   """
   with tf.variable_scope('PreprocessImage'):
     image = tf.image.convert_image_dtype(image, dtype=tf.float32)
-    if augment or central_crop_size:
-      if num_towers == 1:
-        images = [image]
-      else:
-        images = tf.split(value=image, num_or_size_splits=num_towers, axis=1)
-      if central_crop_size:
-        view_crop_size = (central_crop_size[0] / num_towers,
-                          central_crop_size[1])
-        images = [central_crop(img, view_crop_size) for img in images]
-      if augment:
-        images = [augment_image(img) for img in images]
-      image = tf.concat(images, 1)
-
     image = tf.subtract(image, 0.5)
     image = tf.multiply(image, 2.5)
 
@@ -152,8 +138,6 @@ def preprocess_image(image, augment=False, central_crop_size=None,
 
 def get_data(dataset,
              batch_size,
-             augment=False,
-             central_crop_size=None,
              shuffle_config=None,
              shuffle=True):
   """Wraps calls to DatasetDataProviders and shuffle_batch.
@@ -182,7 +166,7 @@ def get_data(dataset,
   image_orig, label = provider.get(['image', 'label'])
 
   image = preprocess_image(
-      image_orig, augment, central_crop_size, num_towers=dataset.num_of_views)
+      image_orig, num_towers=dataset.num_of_views)
   label_one_hot = slim.one_hot_encoding(label, dataset.num_char_classes)
 
   images, images_orig, labels, labels_one_hot = (tf.train.shuffle_batch(

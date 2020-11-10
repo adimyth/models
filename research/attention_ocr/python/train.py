@@ -191,9 +191,7 @@ def main(_):
   with tf.device(device_setter):
     data = data_provider.get_data(
         dataset,
-        FLAGS.batch_size,
-        augment=hparams.use_augment_input,
-        central_crop_size=common_flags.get_crop_size())
+        FLAGS.batch_size)
     endpoints = model.create_base(data.images, data.labels_one_hot)
     total_loss = model.create_loss(data, endpoints)
     model.create_summaries(data, endpoints, dataset.charset, is_training=True)
