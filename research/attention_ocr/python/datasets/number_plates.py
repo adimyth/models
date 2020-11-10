@@ -1,23 +1,23 @@
 import datasets.fsns as fsns
 
-DEFAULT_DATASET_DIR = '/home/anuj/tf-od-api/models/research/attention_ocr/python/datasets/data/number_plates'
+DEFAULT_DATASET_DIR = 'datasets/data/number_plates'
 
 DEFAULT_CONFIG = {
     'name':
         'number_plates', # you can change the name if you want.
     'splits': {
         'train': {
-            'size': 250, # change according to your own train-test split
+            'size': 10500, # change according to your own train-test split
             'pattern': 'train.tfrecord'
         },
         'test': {
-            'size': 49, # change according to your own train-test split
+            'size': 2737, # change according to your own train-test split
             'pattern': 'test.tfrecord'
         }
     },
     'charset_filename':
         'charset-labels.txt',
-    'image_shape': (200,200,3),#(max_width, max_height, 3),
+    'image_shape': (450, 100, 3), # (max_width, max_height, 3),
     'num_of_views':
         1,
     'max_sequence_length':
